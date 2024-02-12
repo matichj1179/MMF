@@ -7,10 +7,10 @@ def yes_no(question):
         response = input(question).lower()
 
         if response == "yes" or response == "y":
-            return "yes"
+            return "show instructions"
 
         elif response == "no" or response == "n":
-            return "no"
+            return "code continues"
 
         else:
             print("please answer yes / no")
