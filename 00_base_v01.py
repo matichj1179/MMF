@@ -46,17 +46,14 @@ def calc_ticket_price(var_age):
 def string_checker(question, num_letters, valid_response):
     error = f"please choose {valid_response[0]} or {valid_response[1]}"
 
-    if num_letters == 1:
-        short_version = 1
-    else:
-        short_version = 2
+
 
     while True:
 
         response = input(question).lower()
 
         for item in valid_response:
-            if response == item[:short_version] or response == item:
+            if response == item[:num_letters] or response == item:
                 return item
 
         print(error)
@@ -71,9 +68,9 @@ yes_no_list = ["yes", "no"]
 payment_list = ["cash", "credit"]
 
 # ask user if they want to see the instructions
-for case in range(0, 5):
-    want_instructions = string_checker("Do you want to read the instructions (y/n): ", 1, yes_no_list)
-    print("You chose", want_instructions)
+
+want_instructions = string_checker("Do you want to read the instructions (y/n): ", 1, yes_no_list)
+print("You chose", want_instructions)
 
 if want_instructions == "yes":
     print("instructions go here")
@@ -101,7 +98,8 @@ while tickets_sold < MAX_TICKETS:
     tick_cost = calc_ticket_price(age)
 
     # get payment method
-    pay_method = string_checker("...", 2, payment_list)
+    pay_method = string_checker("Choose a payment method (cash / credit)", 2, payment_list)
+    print(f"you chose {pay_method}")
 
     tickets_sold += 1
 
