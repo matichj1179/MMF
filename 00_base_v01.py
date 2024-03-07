@@ -1,4 +1,5 @@
 import pandas
+import random
 
 # functions go here
 
@@ -151,6 +152,10 @@ profit = mini_movie_frame['Profit'].sum()
 add_dollars = ['Ticket Price', 'Surcharge', 'Total', 'Profit']
 for var_item in add_dollars:
     mini_movie_frame[var_item] = mini_movie_frame[var_item].apply(currency)
+
+winner_name = random.choice(all_names)
+
+
 
 print("---- Ticket Data ----")
 print()
