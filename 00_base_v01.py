@@ -1,7 +1,21 @@
 import pandas
 import random
+from datetime import date
 
 # functions go here
+
+
+# shows instructions
+def show_instructions():
+    print('''
+ℹ️ℹ️ℹ️ Instructions go here ℹ️ℹ️ℹ️
+
+here they are
+- thing one
+- thing two
+- thing three
+        
+        ''')
 
 
 # checks user response is not blank
@@ -58,15 +72,15 @@ def string_checker(question, num_letters, valid_response):
 
         response = input(question).lower()
 
-        for item in valid_response:
-            if response == item[:short_version] or response == item:
-                return item
+        for var_item in valid_response:
+            if response == var_item[:short_version] or response == var_item:
+                return var_item
 
         print(error)
 
 
 def currency(x):
-    return f"{x:.2f}"
+    return f"${x:.2f}"
 
 
 # main routine goes here
@@ -91,10 +105,9 @@ mini_movie_dict = {
 # ask user if they want to see the instructions
 
 want_instructions = string_checker("Do you want to read the instructions (y/n): ", 1, yes_no_list)
-print("You chose", want_instructions)
 
 if want_instructions == "yes":
-    print("instructions go here")
+    show_instructions()
 
 print()
 
@@ -102,8 +115,12 @@ print()
 while tickets_sold < MAX_TICKETS:
     name = not_blank("Enter your name (or 'xxx' quit) ")
 
-    if name == 'xxx':
+    if name == 'xxx' and len(all_names) > 0:
         break
+    elif name == 'xxx':
+        print("You must sell at least ONE ticket before quitting")
+        continue
+
     age = num_check("Age: ")
 
     if 12 <= age <= 120:
@@ -133,7 +150,6 @@ while tickets_sold < MAX_TICKETS:
     all_ticket_costs.append(tick_cost)
     all_surcharge.append(surcharge)
 
-
 #  ***  Once tickets have been sold, create panda ***
 mini_movie_frame = pandas.DataFrame(mini_movie_dict)
 
@@ -148,25 +164,65 @@ mini_movie_frame['Profit'] = mini_movie_frame['Ticket Price'] - 5
 total = mini_movie_frame['Total'].sum()
 profit = mini_movie_frame['Profit'].sum()
 
-# Currency Formatting (uses currency function)
+# choose winner and look up total
+winner_name = random.choice(all_names)
+win_index = all_names.index(winner_name)
+total_won = mini_movie_frame.at[win_index, 'Total']
+
+# 💰💰💰 Currency Formatting (uses currency function)
 add_dollars = ['Ticket Price', 'Surcharge', 'Total', 'Profit']
 for var_item in add_dollars:
     mini_movie_frame[var_item] = mini_movie_frame[var_item].apply(currency)
 
 winner_name = random.choice(all_names)
 
-
-
 print("---- Ticket Data ----")
 print()
 
 # output table with ticket data
 mini_movie_frame = mini_movie_frame.set_index('Name')
-print(mini_movie_frame)
 
-print()
-print("----- Ticket Cost / Profit -----")
+# get today's date
+today = date.today()
 
-# output total ticker sales and profit
-print(f"Total ticket Sales: ${total:.2f}")
-print(f"Total Profit: ${profit:.2f}")
+# Get day, month and year as individual strings
+day = today.strftime("%d")
+month = today.strftime("%m")
+year = today.strftime("%Y")
+
+heading = f"-----The current date is {day}/{month}/{year}-----"
+filename = f"MMF_{year}_{month}_{day}"
+
+mini_movie_string = pandas.DataFrame.to_string(mini_movie_frame)
+
+ticket_cost_heading = "\n----- Ticket Cost / Profit -----"
+total_ticket_sales = f"Total Ticket Sales: ${total}"
+total_profit = f"Total Profit: ${profit}"
+
+sales_status = "\n*** All the tickets have been sold ***"
+
+winner_heading = "\n---- Raffle Winner ----"
+winner_text = f"The winner of the raffle is {winner_name} " \
+              f"They have won ${total_won}. ie: their ticker is" \
+              "free!"
+
+# list holding content to print
+to_write = [heading, mini_movie_string, ticket_cost_heading,
+            total_ticket_sales, total_profit, sales_status,
+            winner_heading, winner_text]
+
+# print output
+for item in to_write:
+    print(item)
+
+# write output to file
+# create file to hold data (add .txt extension)
+write_to = f"{filename}.txt"
+text_file = open(write_to, "w+")
+
+for item in to_write:
+    text_file.write(item)
+    text_file.write("\n")
+
+# close file
+text_file.close()
